@@ -1,21 +1,21 @@
 import { NextFunction, Request, Response } from "express";
 // Services
-import { PartnerService } from "./partner.service";
+import { UserService } from "./user.service";
 // Types
-import { ERROR_MSG } from "./partner.entity";
+import { ERROR_MSG } from "./user.entity";
 // Utils
 import { signToken } from "../../utils/auth";
 import { AppError } from "../../utils/errorsCenter/appError";
 import HttpStatusCode from "../../utils/httpStatusCode";
 
-export class PartnerController {
-  private partnerService = new PartnerService();
+export class UserController {
+  private userService = new UserService();
 
   private signToken = (name: string) =>
     signToken(
       {
         Name: name,
-        permissions: ["partner:read", "partner:write"],
+        permissions: ["user:read", "user:write"],
       },
       {
         algorithm: "RS256",
@@ -29,10 +29,10 @@ export class PartnerController {
     next: NextFunction,
   ) => {
     try {
-      const partner = await this.partnerService.getInfo(req.params.id);
-      if (!partner)
+      const user = await this.userService.getInfo(req.params.id);
+      if (!user)
         throw new AppError(HttpStatusCode.NOT_FOUND, ERROR_MSG.NOT_FOUND, true);
-      res.status(HttpStatusCode.OK).send(partner);
+      res.status(HttpStatusCode.OK).send(user);
     } catch (error) {
       next(error);
     }
@@ -40,20 +40,20 @@ export class PartnerController {
 
   public signup = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const partner = await this.partnerService.signup(req.body);
-      if (!partner)
+      const user = await this.userService.signup(req.body);
+      if (!user)
         throw new AppError(
           HttpStatusCode.NOT_ACCEPTABLE,
           ERROR_MSG.NOT_VALID,
           true,
         );
-      const accessToken = this.signToken(partner.name);
+      const accessToken = this.signToken(user.name);
       res.status(HttpStatusCode.CREATED).json({
         Success: true,
-        partner: {
-          id: partner.id,
-          name: partner.name,
-          phone: partner.phone,
+        user: {
+          id: user.id,
+          name: user.name,
+          phone: user.phone,
         },
         accessToken,
       });
@@ -64,23 +64,23 @@ export class PartnerController {
 
   public login = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const partner = await this.partnerService.login(
+      const user = await this.userService.login(
         req.body.phone,
         req.body.password,
       );
-      if (!partner)
+      if (!user)
         throw new AppError(
           HttpStatusCode.NOT_ACCEPTABLE,
           ERROR_MSG.NOT_VALID,
           true,
         );
-      const accessToken = this.signToken(partner.name);
+      const accessToken = this.signToken(user.name);
       res.status(HttpStatusCode.ACCEPTED).json({
         success: true,
-        partner: {
-          id: partner.id,
-          name: partner.name,
-          phone: partner.phone,
+        user: {
+          id: user.id,
+          name: user.name,
+          phone: user.phone,
         },
         accessToken,
       });
@@ -95,14 +95,14 @@ export class PartnerController {
 
   public update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const partner = await this.partnerService.update(req.params.id, req.body);
-      if (!partner)
+      const user = await this.userService.update(req.params.id, req.body);
+      if (!user)
         throw new AppError(
           HttpStatusCode.NOT_ACCEPTABLE,
           ERROR_MSG.NOT_VALID,
           true,
         );
-      res.sendStatus(HttpStatusCode.ACCEPTED).send(partner);
+      res.sendStatus(HttpStatusCode.ACCEPTED).send(user);
     } catch (error) {
       next(error);
     }
@@ -110,8 +110,8 @@ export class PartnerController {
 
   public remove = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const partner = await this.partnerService.remove(req.params.id);
-      if (!partner)
+      const user = await this.userService.remove(req.params.id);
+      if (!user)
         throw new AppError(HttpStatusCode.NOT_FOUND, ERROR_MSG.NOT_FOUND, true);
       res.status(HttpStatusCode.ACCEPTED).send("Deleted Successfully");
     } catch (errors) {

@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { body, param } from "express-validator";
 // Controller
-import { PartnerController } from "./partner.controller";
+import { UserController } from "./user.controller";
 // Types
 import { IRoute } from "../../interfaces/route.interface";
-import { ERROR_MSG } from "./partner.entity";
+import { ERROR_MSG } from "./user.entity";
 // middlewares
 import { validate } from "../../middlewares/validate.middleware";
 import {
@@ -13,9 +13,9 @@ import {
   authErrorHandler,
 } from "../../middlewares/auth.middleware";
 import { setCache } from "../../middlewares/cache.middleware";
-export class PartnerRoute implements IRoute {
+export class UserRoute implements IRoute {
   public router: Router = Router();
-  private controller: PartnerController = new PartnerController();
+  private controller: UserController = new UserController();
 
   constructor() {
     this.initializeRoutes();
@@ -23,10 +23,10 @@ export class PartnerRoute implements IRoute {
 
   private initializeRoutes() {
     this.router.get(
-      "/partner/:id",
+      "/user/:id",
       [
         jwtToken(true),
-        guard.check(["partner:read", "partner:write"]),
+        guard.check(["user:read", "user:write"]),
         authErrorHandler,
         validate([param("id").isUUID().withMessage(ERROR_MSG.NOT_FOUND)]),
         setCache,
@@ -34,7 +34,7 @@ export class PartnerRoute implements IRoute {
       this.controller.indexInfo,
     );
     this.router.post(
-      "/partner/signup",
+      "/user/signup",
       validate([
         body("name").isString().escape().withMessage(ERROR_MSG.NAME),
 
@@ -53,7 +53,7 @@ export class PartnerRoute implements IRoute {
       this.controller.signup,
     );
     this.router.post(
-      "/partner/login",
+      "/user/login",
       validate([
         body("phone").isString().escape().withMessage(ERROR_MSG.PHONE),
 
@@ -61,12 +61,12 @@ export class PartnerRoute implements IRoute {
       ]),
       this.controller.login,
     );
-    this.router.post("/partner/logout", this.controller.logout);
+    this.router.post("/user/logout", this.controller.logout);
     this.router.put(
-      "/partner/:id",
+      "/user/:id",
       [
         jwtToken(true),
-        guard.check(["partner:read", "partner:write"]),
+        guard.check(["user:read", "user:write"]),
         authErrorHandler,
         validate([
           param("id").isUUID().withMessage(ERROR_MSG.NOT_FOUND),
@@ -95,10 +95,10 @@ export class PartnerRoute implements IRoute {
       this.controller.update,
     );
     this.router.delete(
-      "/partner/:id",
+      "/user/:id",
       [
         jwtToken(true),
-        guard.check(["partner:read", "partner:write"]),
+        guard.check(["user:read", "user:write"]),
         authErrorHandler,
         validate([param("id").isUUID().withMessage(ERROR_MSG.NOT_FOUND)]),
       ],

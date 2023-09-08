@@ -2,14 +2,12 @@ import { DataSource } from "typeorm";
 // Config
 import { DB } from "./config";
 // Entities
-import { Poet } from "./components/poet/poet.entity";
-import { Poem } from "./components/poem/poem.entity";
-import { Partner } from "./components/partner/partner.entity";
+import { User } from "./components/user/user.entity";
 // Utils
 import { logger } from "./utils/logger";
 
 export const AppDataSource = new DataSource({
-  type: "postgres",
+  type: "mysql",
   host: DB.host,
   port: Number(DB.port),
   username: DB.user,
@@ -23,7 +21,7 @@ export const AppDataSource = new DataSource({
     : false,
   synchronize: true,
   logging: true,
-  entities: [Poet, Poem, Partner],
+  entities: [User],
   migrations: [],
   subscribers: [],
 });
@@ -31,9 +29,9 @@ export const AppDataSource = new DataSource({
 const connectDB = async () => {
   try {
     await AppDataSource.initialize();
-    logger.info(`Connected To Postgres database correctly, Host: ${DB.host}`);
+    logger.info(`Connected To MySQL database correctly, Host: ${DB.host}`);
   } catch (error) {
-    logger.error("Failed to connect to database");
+    logger.error("Failed to connect to database. \n",  error);
     process.exit(1);
   }
 };
@@ -44,7 +42,7 @@ connectDB();
 process.on("SIGINT", async () => {
   await AppDataSource.destroy().catch((err) => logger.error(`${err}`));
   logger.info(
-    "Postgres default connection disconnected through app termination",
+    "MySQL default connection disconnected through app termination",
   );
 
   process.exit(0);

@@ -4,10 +4,8 @@ import App from "./app";
 import "./db";
 import "./redis";
 // Routes
-import { PoetRoute } from "./components/poet/poet.route";
-import { PoemRoute } from "./components/poem/poem.route";
-import { PartnerRoute } from "./components/partner/partner.route";
+import { UserRoute } from "./components/user/user.route";
 
-const app = new App([new PoetRoute(), new PoemRoute(), new PartnerRoute()]);
+const app = new App([new UserRoute()]);
 
 export default app.listen();

@@ -5,7 +5,7 @@ import { baseHttp, withAuthHttp } from "../axios";
 import HttpStatusCode from "../../utils/httpStatusCode";
 // Types
 import { AxiosError } from "axios";
-import { ERROR_MSG, Partner } from "../../components/partner/partner.entity";
+import { ERROR_MSG, User } from "../../components/user/user.entity";
 
 const signupData = {
   name: "E2E Test",
@@ -18,16 +18,16 @@ const loginData = {
   password: "P@ssword1",
 };
 
-describe("GET /partner/:id", () => {
-  let partnerId: string;
+describe("GET /user/:id", () => {
+  let userId: string;
   let token: string;
   before(async () => {
-    const req = await baseHttp.post("partner/login", loginData);
-    partnerId = req.data.partner.id;
+    const req = await baseHttp.post("user/login", loginData);
+    userId = req.data.user.id;
     token = req.data.accessToken;
   });
-  it("get Partner info when authorized", async () => {
-    const req = await withAuthHttp(token).get(`partner/${partnerId}`);
+  it("get User info when authorized", async () => {
+    const req = await withAuthHttp(token).get(`user/${userId}`);
 
     assert.equal(req.status, HttpStatusCode.OK);
 
@@ -36,8 +36,8 @@ describe("GET /partner/:id", () => {
     assert.isString(req.data.phone);
   });
 
-  it("responds with not authorized error when get Partner info with out authorization", async () => {
-    await baseHttp.get(`partner/${partnerId}`).catch((error) => {
+  it("responds with not authorized error when get User info with out authorization", async () => {
+    await baseHttp.get(`user/${userId}`).catch((error) => {
       if (error instanceof AxiosError) {
         assert.equal(error.response!.status, HttpStatusCode.UNAUTHORIZED);
         assert.equal(
@@ -50,7 +50,7 @@ describe("GET /partner/:id", () => {
     });
 
     await withAuthHttp("tettt1")
-      .get(`partner/${partnerId}`)
+      .get(`user/${userId}`)
       .catch((error) => {
         if (error instanceof AxiosError) {
           assert.equal(error.response!.status, HttpStatusCode.UNAUTHORIZED);
@@ -66,8 +66,8 @@ describe("GET /partner/:id", () => {
 
   it("gets 404 with nonExisting UUID", async () => {
     try {
-      const corruptedId = partnerId.replace(partnerId[5], "a");
-      await withAuthHttp(token).get(`partner/${corruptedId}`);
+      const corruptedId = userId.replace(userId[5], "a");
+      await withAuthHttp(token).get(`user/${corruptedId}`);
     } catch (error) {
       if (error instanceof AxiosError) {
         assert.strictEqual(error.response!.status, HttpStatusCode.NOT_FOUND);
@@ -80,7 +80,7 @@ describe("GET /partner/:id", () => {
 
   it("gets 400 with wrong :id format", async () => {
     try {
-      await withAuthHttp(token).get(`partner/22`);
+      await withAuthHttp(token).get(`user/22`);
     } catch (error) {
       if (error instanceof AxiosError) {
         assert.strictEqual(error.response!.status, HttpStatusCode.BAD_REQUEST);
@@ -92,22 +92,22 @@ describe("GET /partner/:id", () => {
   });
 });
 
-describe("POST /partner/login", () => {
+describe("POST /user/login", () => {
   it("It login with correct data", async () => {
-    const req = await baseHttp.post("/partner/login", loginData);
+    const req = await baseHttp.post("/user/login", loginData);
 
     assert.equal(req.status, HttpStatusCode.ACCEPTED);
 
     assert.isTrue(req.data.success);
 
-    assert.containsAllKeys(req.data.partner, ["id", "name", "phone"]);
+    assert.containsAllKeys(req.data.user, ["id", "name", "phone"]);
 
     assert.isString(req.data.accessToken);
   });
 
   it("Refuse login with incorrect data", async () => {
     try {
-      const req = await baseHttp.post("/partner/login", {
+      const req = await baseHttp.post("/user/login", {
         phone: "01235554227",
         password: "P@ssword1",
       });
@@ -123,7 +123,7 @@ describe("POST /partner/login", () => {
 
   it("return the correct error message with invalid data", async () => {
     await baseHttp
-      .post("/partner/login", { phone: "01235554227" })
+      .post("/user/login", { phone: "01235554227" })
       .catch((error) => {
         if (error instanceof AxiosError) {
           assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
@@ -134,7 +134,7 @@ describe("POST /partner/login", () => {
       });
 
     await baseHttp
-      .post("/partner/login", { password: "P@ssword1" })
+      .post("/user/login", { password: "P@ssword1" })
       .catch((error) => {
         if (error instanceof AxiosError) {
           assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
@@ -146,26 +146,26 @@ describe("POST /partner/login", () => {
   });
 });
 
-describe("POST /partner/signup", () => {
-  it("partner signup successfully with correct data and it return the accessToken", async () => {
-    const req = await baseHttp.post("partner/signup", signupData);
+describe("POST /user/signup", () => {
+  it("user signup successfully with correct data and it return the accessToken", async () => {
+    const req = await baseHttp.post("user/signup", signupData);
 
     assert.equal(req.status, HttpStatusCode.CREATED);
 
     assert.isTrue(req.data.Success);
 
-    assert.containsAllKeys(req.data.partner, ["id", "name", "phone"]);
+    assert.containsAllKeys(req.data.user, ["id", "name", "phone"]);
 
     assert.isString(req.data.accessToken);
 
     await withAuthHttp(req.data.accessToken).delete(
-      `partner/${req.data.partner.id}`,
+      `user/${req.data.user.id}`,
     );
   });
 
   it("returns the correct error message with invalid data", async () => {
     await baseHttp
-      .post("/partner/signup", {
+      .post("/user/signup", {
         // "name": "E2E Test",
         phone: "01235554467",
         password: "P@ssword1",
@@ -180,7 +180,7 @@ describe("POST /partner/signup", () => {
       });
 
     await baseHttp
-      .post("/partner/signup", {
+      .post("/user/signup", {
         name: "E2E Test",
         // "phone": "01235554467",
         password: "P@ssword1",
@@ -195,7 +195,7 @@ describe("POST /partner/signup", () => {
       });
 
     await baseHttp
-      .post("/partner/signup", {
+      .post("/user/signup", {
         name: "E2E Test",
         phone: "01235554567",
         // password: ""
@@ -211,19 +211,19 @@ describe("POST /partner/signup", () => {
   });
 });
 
-describe("PUT /partner/:id", () => {
-  let partnerId: string;
+describe("PUT /user/:id", () => {
+  let userId: string;
   let token: string;
   before(async () => {
-    const req = await baseHttp.post("partner/signup", signupData);
-    partnerId = req.data.partner.id;
+    const req = await baseHttp.post("user/signup", signupData);
+    userId = req.data.user.id;
     token = req.data.accessToken;
   });
 
-  after(() => withAuthHttp(token).delete(`partner/${partnerId}`));
+  after(() => withAuthHttp(token).delete(`user/${userId}`));
 
-  it("It updates partner data successfully with valid data", async () => {
-    const req = await withAuthHttp(token).put(`partner/${partnerId}`, {
+  it("It updates user data successfully with valid data", async () => {
+    const req = await withAuthHttp(token).put(`user/${userId}`, {
       name: "E2E Put Test",
     });
     assert.equal(req.status, HttpStatusCode.ACCEPTED);
@@ -231,7 +231,7 @@ describe("PUT /partner/:id", () => {
 
   it("returns the correct error message with invalid data", async () => {
     await withAuthHttp(token)
-      .put(`partner/${partnerId}`, { name: 1221 })
+      .put(`user/${userId}`, { name: 1221 })
       .catch((error) => {
         if (error instanceof AxiosError) {
           assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
@@ -242,7 +242,7 @@ describe("PUT /partner/:id", () => {
       });
 
     await withAuthHttp(token)
-      .put(`partner/${partnerId}`, { phone: 12412 })
+      .put(`user/${userId}`, { phone: 12412 })
       .catch((error) => {
         if (error instanceof AxiosError) {
           assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
@@ -253,7 +253,7 @@ describe("PUT /partner/:id", () => {
       });
 
     await withAuthHttp(token)
-      .put(`partner/${partnerId}`, { password: 1221 })
+      .put(`user/${userId}`, { password: 1221 })
       .catch((error) => {
         if (error instanceof AxiosError) {
           assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
@@ -266,8 +266,8 @@ describe("PUT /partner/:id", () => {
 
   it("gets 404 with nonExisting UUID", async () => {
     try {
-      const corruptedId = partnerId.replace(partnerId[5], "a");
-      await withAuthHttp(token).put(`partner/${corruptedId}`);
+      const corruptedId = userId.replace(userId[5], "a");
+      await withAuthHttp(token).put(`user/${corruptedId}`);
     } catch (error) {
       if (error instanceof AxiosError) {
         assert.strictEqual(
@@ -283,7 +283,7 @@ describe("PUT /partner/:id", () => {
 
   it("gets 400 with wrong :id format", async () => {
     try {
-      await withAuthHttp(token).put(`partner/22`);
+      await withAuthHttp(token).put(`user/22`);
     } catch (error) {
       if (error instanceof AxiosError) {
         assert.strictEqual(error.response!.status, HttpStatusCode.BAD_REQUEST);
@@ -295,24 +295,24 @@ describe("PUT /partner/:id", () => {
   });
 });
 
-describe("DELETE /partner/:id", () => {
-  let partnerId: string;
+describe("DELETE /user/:id", () => {
+  let userId: string;
   let token: string;
   before(async () => {
-    const req = await baseHttp.post("partner/signup", signupData);
-    partnerId = req.data.partner.id;
+    const req = await baseHttp.post("user/signup", signupData);
+    userId = req.data.user.id;
     token = req.data.accessToken;
   });
 
-  it("Delete partner/:id successfully", async () => {
-    const req = await withAuthHttp(token).delete(`/partner/${partnerId}`);
+  it("Delete user/:id successfully", async () => {
+    const req = await withAuthHttp(token).delete(`/user/${userId}`);
     assert.equal(req.status, HttpStatusCode.ACCEPTED);
   });
 
   it("gets 404 with nonExisting UUID", async () => {
     try {
-      const corruptedId = partnerId.replace(partnerId[5], "a");
-      await withAuthHttp(token).delete(`partner/${corruptedId}`);
+      const corruptedId = userId.replace(userId[5], "a");
+      await withAuthHttp(token).delete(`user/${corruptedId}`);
     } catch (error) {
       if (error instanceof AxiosError) {
         assert.strictEqual(error.response!.status, HttpStatusCode.NOT_FOUND);
@@ -325,7 +325,7 @@ describe("DELETE /partner/:id", () => {
 
   it("gets 400 with wrong :id format", async () => {
     try {
-      await withAuthHttp(token).delete(`partner/22`);
+      await withAuthHttp(token).delete(`user/22`);
     } catch (error) {
       if (error instanceof AxiosError) {
         assert.strictEqual(error.response!.status, HttpStatusCode.BAD_REQUEST);

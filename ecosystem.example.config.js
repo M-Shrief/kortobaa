@@ -7,7 +7,7 @@ module.exports = { // very good docs at http://pm2.keymetrics.io/docs/usage/appl
     apps: [
       {
         name: "starter",
-        instances: 0, // 0 means create instances to number of CPU cores on host
+        instances: 1, // 0 means create instances to number of CPU cores on host
         script: "dist/index.js",
         watch: true,
         ignore_watch: [
@@ -28,7 +28,7 @@ module.exports = { // very good docs at http://pm2.keymetrics.io/docs/usage/appl
           NODE_ENV: 'development',
           PORT: 3000,
           DB_HOST: 'localhost',
-          DB_PORT: 5432,
+          DB_PORT: 3306,
           DB_NAME: '',
           DB_USER: '',
           DB_PASSWORD: '',
@@ -43,7 +43,7 @@ module.exports = { // very good docs at http://pm2.keymetrics.io/docs/usage/appl
           NODE_ENV: 'development',
           PORT: 3000,
           DB_HOST: 'localhost',
-          DB_PORT: 5432,
+          DB_PORT: 3306,
           DB_NAME: '',
           DB_USER: '',
           DB_PASSWORD: '',
