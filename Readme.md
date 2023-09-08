@@ -13,7 +13,8 @@ characteristics:
 
 
 ### Note
-Make sure to declare ENV properties, and generate JWT keys before.
+Make sure to declare ENV properties in PM2 config file, and generate JWT keys before.
+
 To generate JWT keys:
 
 ```bash
