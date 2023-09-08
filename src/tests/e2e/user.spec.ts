@@ -9,7 +9,7 @@ import { ERROR_MSG, User } from "../../components/user/user.entity";
 
 const signupData = {
   name: "E2E Test",
-  phone: "01235554568",
+  phone: "01235554567",
   password: "P@ssword1",
 };
 
@@ -21,12 +21,13 @@ const loginData = {
 describe("GET /user/:id", () => {
   let userId: string;
   let token: string;
-  before(async () => {
+  beforeEach(async () => {
     const req = await baseHttp.post("user/login", loginData);
     userId = req.data.user.id;
     token = req.data.accessToken;
   });
   it("get User info when authorized", async () => {
+    console.info("Toke:", token)
     const req = await withAuthHttp(token).get(`user/${userId}`);
 
     assert.equal(req.status, HttpStatusCode.OK);
