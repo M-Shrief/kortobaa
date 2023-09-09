@@ -7,6 +7,7 @@ import {
 } from "typeorm";
 // Entites
 import { BaseEntity } from "../../interfaces/baseEntity";
+import { Product } from "../product/product.entity";
 
 @Entity()
 export class User extends BaseEntity {
@@ -21,6 +22,10 @@ export class User extends BaseEntity {
 
   @Column({ type: "varchar", length: 100 })
   password!: string;
+
+  @OneToMany((type) => Product, (product) => product.user)
+  @JoinColumn({ name: 'products' })
+  products!: Product[];
 }
 
 export enum ERROR_MSG {
