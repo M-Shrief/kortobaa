@@ -16,10 +16,10 @@ export class User extends BaseEntity {
   @Column({ type: "varchar", length: 50 })
   name!: string;
 
-  @Column({ type: "varchar", length: 50 })
+  @Column({ type: "varchar", length: 50, unique: true })
   phone!: string;
 
-  @Column({ type: "varchar", length: 100 })
+  @Column({ type: "varchar", length: 20 })
   password!: string;
 }
 
