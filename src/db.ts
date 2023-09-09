@@ -3,6 +3,7 @@ import { DataSource } from "typeorm";
 import { DB } from "./config";
 // Entities
 import { User } from "./components/user/user.entity";
+import { Product } from "./components/product/product.entity";
 // Utils
 import { logger } from "./utils/logger";
 
@@ -21,7 +22,7 @@ export const AppDataSource = new DataSource({
     : false,
   synchronize: true,
   logging: true,
-  entities: [User],
+  entities: [User, Product],
   migrations: [],
   subscribers: [],
 });

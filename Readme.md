@@ -14,7 +14,7 @@ characteristics:
 
 ### Note
 Make sure to declare ENV properties in PM2 config file, and generate JWT keys before.
-
+And You need to disaple deleting signup data in 
 To generate JWT keys:
 
 ```bash
