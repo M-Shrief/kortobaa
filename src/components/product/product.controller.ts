@@ -10,6 +10,20 @@ import HttpStatusCode from "../../utils/httpStatusCode";
 export class ProductController {
     private productService = new ProductService();
 
+    public getOne = async (req: Request, res: Response, next: NextFunction) => {
+        try {  
+            const product = await this.productService.getOne(req.params.id);
+            if(!product)
+                throw new AppError(
+                    HttpStatusCode.NOT_FOUND,
+                    ERROR_MSG.NOT_FOUND,
+                    true
+                )
+            res.status(HttpStatusCode.CREATED).send(product);
+        } catch (error) {
+            next(error)
+        }
+    }
 
     public post = async (req: Request, res: Response, next: NextFunction) => {
         try {
@@ -20,7 +34,7 @@ export class ProductController {
                     ERROR_MSG.NOT_VALID,
                     true
                 )
-            res.status(HttpStatusCode.CREATED).send(product);
+            res.status(HttpStatusCode.OK).send(product);
         } catch (error) {
             next(error)            
         }
