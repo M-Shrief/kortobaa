@@ -45,5 +45,9 @@ export class ProductService {
         return newProduct.affected;
     } 
 
-
+    public async remove(id: string): Promise<number | false> {
+        const product = await this.productRepository.delete(id);
+        if (!product.affected) return false;
+        return product.affected;
+    }
 }

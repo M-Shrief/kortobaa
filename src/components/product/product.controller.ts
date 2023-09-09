@@ -71,5 +71,14 @@ export class ProductController {
         }
     }
 
-
+    public remove = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const product = await this.productService.remove(req.params.id);
+            if (!product)
+                throw new AppError(HttpStatusCode.NOT_FOUND, ERROR_MSG.NOT_FOUND, true);
+          res.status(HttpStatusCode.ACCEPTED).send("Deleted Successfully");
+        } catch (errors) {
+          next(errors);
+        }
+      };
 }
