@@ -2,19 +2,22 @@ import { NextFunction, Request, Response } from "express";
 // Services
 import { UserService } from "./user.service";
 // Types
+import { JwtPayload } from "jsonwebtoken";
 import { ERROR_MSG } from "./user.entity";
 // Utils
-import { signToken } from "../../utils/auth";
+import { signToken, verifyToken } from "../../utils/auth";
 import { AppError } from "../../utils/errorsCenter/appError";
 import HttpStatusCode from "../../utils/httpStatusCode";
+import {decodeToken} from '../../utils/auth';
 
 export class UserController {
   private userService = new UserService();
 
-  private signToken = (name: string) =>
+  private signToken = (name: string, id: string) =>
     signToken(
       {
-        Name: name,
+        name,
+        id,
         permissions: ["user:read", "user:write"],
       },
       {
@@ -29,7 +32,9 @@ export class UserController {
     next: NextFunction,
   ) => {
     try {
-      const user = await this.userService.getInfo(req.params.id);
+      // headers.authorization is validated in router, so we're certain it'll exist.
+      const decoded = decodeToken(req.headers.authorization!.slice(7)) as JwtPayload;
+      const user = await this.userService.getInfo(decoded.id);
       if (!user)
         throw new AppError(HttpStatusCode.NOT_FOUND, ERROR_MSG.NOT_FOUND, true);
       res.status(HttpStatusCode.OK).send(user);
@@ -47,7 +52,7 @@ export class UserController {
           ERROR_MSG.NOT_VALID,
           true,
         );
-      const accessToken = this.signToken(user.name);
+      const accessToken = this.signToken(user.name, user.id);
       res.status(HttpStatusCode.CREATED).json({
         Success: true,
         user: {
@@ -74,8 +79,8 @@ export class UserController {
           ERROR_MSG.NOT_VALID,
           true,
         );
-      const accessToken = this.signToken(user.name);
-      res.status(HttpStatusCode.ACCEPTED).json({
+        const accessToken = this.signToken(user.name, user.id);
+        res.status(HttpStatusCode.ACCEPTED).json({
         success: true,
         user: {
           id: user.id,
@@ -95,7 +100,8 @@ export class UserController {
 
   public update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const user = await this.userService.update(req.params.id, req.body);
+      const decoded = decodeToken(req.headers.authorization!.slice(7)) as JwtPayload;
+      const user = await this.userService.update(decoded.id, req.body);
       if (!user)
         throw new AppError(
           HttpStatusCode.NOT_ACCEPTABLE,
@@ -110,7 +116,8 @@ export class UserController {
 
   public remove = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const user = await this.userService.remove(req.params.id);
+      const decoded = decodeToken(req.headers.authorization!.slice(7)) as JwtPayload;
+      const user = await this.userService.remove(decoded.id);
       if (!user)
         throw new AppError(HttpStatusCode.NOT_FOUND, ERROR_MSG.NOT_FOUND, true);
       res.status(HttpStatusCode.ACCEPTED).send("Deleted Successfully");

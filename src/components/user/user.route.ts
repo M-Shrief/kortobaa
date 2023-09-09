@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { body, param } from "express-validator";
+import { body } from "express-validator";
 // Controller
 import { UserController } from "./user.controller";
 // Types
@@ -23,12 +23,11 @@ export class UserRoute implements IRoute {
 
   private initializeRoutes() {
     this.router.get(
-      "/user/:id",
+      "/user/me",
       [
         jwtToken(true),
         guard.check(["user:read", "user:write"]),
         authErrorHandler,
-        validate([param("id").isUUID().withMessage(ERROR_MSG.NOT_FOUND)]),
         setCache,
       ],
       this.controller.indexInfo,
@@ -63,14 +62,12 @@ export class UserRoute implements IRoute {
     );
     this.router.post("/user/logout", this.controller.logout);
     this.router.put(
-      "/user/:id",
+      "/user/me",
       [
         jwtToken(true),
         guard.check(["user:read", "user:write"]),
         authErrorHandler,
         validate([
-          param("id").isUUID().withMessage(ERROR_MSG.NOT_FOUND),
-
           body("name")
             .optional()
             .isString()
@@ -95,12 +92,11 @@ export class UserRoute implements IRoute {
       this.controller.update,
     );
     this.router.delete(
-      "/user/:id",
+      "/user/me",
       [
         jwtToken(true),
         guard.check(["user:read", "user:write"]),
         authErrorHandler,
-        validate([param("id").isUUID().withMessage(ERROR_MSG.NOT_FOUND)]),
       ],
       this.controller.remove,
     );
