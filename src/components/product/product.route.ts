@@ -30,6 +30,9 @@ export class ProductRoute implements IRoute {
 
         this.router.post('/product', this.controller.post)
 
+        this.router.put('/product/:id', this.controller.update)
+        // this.router.delete('/product/:id', this.controller.remove)
+
         // An example using multer to get the data from req.file
         // this.router.post('/product', uploadImages.single('image'), this.controller.postMulter)
     }

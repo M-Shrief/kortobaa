@@ -2,7 +2,7 @@ import {AppDataSource} from '../../db';
 // Entities
 import { Product } from './product.entity';
 // Schemas
-import { createSchema } from './product.schema';
+import { createSchema, updateSchema } from './product.schema';
 
 export class ProductService {
     private productRepository = AppDataSource.getRepository(Product);
@@ -35,4 +35,15 @@ export class ProductService {
         if(!newProduct) return false;
         return newProduct;
     } 
+
+    public async update(id: string, productData: Product): Promise<number | false> {
+        const isValid = await updateSchema.isValid(productData);
+        if (!isValid) return false;
+
+        const newProduct = await this.productRepository.update(id,productData);
+        if (!newProduct.affected) return false;
+        return newProduct.affected;
+    } 
+
+
 }

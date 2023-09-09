@@ -55,4 +55,21 @@ export class ProductController {
             next(error)            
         }
     }
+
+    public update = async (req: Request, res: Response, next: NextFunction) => {
+        try {  
+            const product = await this.productService.update(req.params.id, req.body);
+            if(!product)
+                throw new AppError(
+                    HttpStatusCode.NOT_ACCEPTABLE,
+                    ERROR_MSG.NOT_VALID,
+                    true
+                )
+            res.sendStatus(HttpStatusCode.ACCEPTED).send(product);
+        } catch (error) {
+            next(error)
+        }
+    }
+
+
 }
