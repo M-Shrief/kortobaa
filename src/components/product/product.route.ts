@@ -37,7 +37,15 @@ export class ProductRoute implements IRoute {
             this.controller.getOne
         )
 
-        this.router.post('/product',this.controller.post)
+        this.router.post(
+            '/product',
+            [
+                jwtToken(true),
+                guard.check(["user:read", "user:write"]),
+                authErrorHandler,
+            ],
+            this.controller.post
+        )
 
         // An example using multer to get the data from req.file
         // this.router.post(
@@ -52,7 +60,15 @@ export class ProductRoute implements IRoute {
         // )
 
 
-        this.router.post('/products', this.controller.postMany)
+        this.router.post(
+            '/products',
+            [
+                jwtToken(true),
+                guard.check(["user:read", "user:write"]),
+                authErrorHandler,
+            ],
+            this.controller.postMany
+        )
 
         this.router.put(
             '/product/:id', 

@@ -30,7 +30,8 @@ export class ProductController {
 
     public post = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const product = await this.productService.post(req.body);
+            const decoded = decodeToken(req.headers.authorization!.slice(7)) as JwtPayload;
+            const product = await this.productService.post({...req.body, user: decoded.id});
             if(!product)
                 throw new AppError(
                     HttpStatusCode.NOT_ACCEPTABLE,
@@ -45,6 +46,7 @@ export class ProductController {
 
     public postMany = async (req: Request, res: Response, next: NextFunction) => {
         try {
+          const decoded = decodeToken(req.headers.authorization!.slice(7)) as JwtPayload;
           const poets = await this.productService.postMany(req.body);
           if (!poets)
             throw new AppError(
@@ -60,8 +62,9 @@ export class ProductController {
 
     public postMulter = async (req: Request, res: Response, next: NextFunction) => {
         try {
+            const decoded = decodeToken(req.headers.authorization!.slice(7)) as JwtPayload;
             const image = Buffer.from(req.file?.buffer!).toString('base64')
-            const product = await this.productService.post({...req.body, image});
+            const product = await this.productService.post({...req.body, image, user: decoded.id});
             if(!product)
                 throw new AppError(
                     HttpStatusCode.NOT_ACCEPTABLE,
