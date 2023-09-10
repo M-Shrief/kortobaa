@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 // Services
 import { ProductService } from "./product.service";
 // Types
-import { ERROR_MSG } from "./product.entity";
+import { ERROR_MSG, Product } from "./product.entity";
 import { JwtPayload } from "jsonwebtoken";
 // Utils
 import { AppError } from "../../utils/errorsCenter/appError";
@@ -47,14 +47,15 @@ export class ProductController {
     public postMany = async (req: Request, res: Response, next: NextFunction) => {
         try {
           const decoded = decodeToken(req.headers.authorization!.slice(7)) as JwtPayload;
-          const poets = await this.productService.postMany(req.body);
-          if (!poets)
+          const productsData = req.body.map((productData: Product) => {return {...productData, user: decoded.id}})
+          const products = await this.productService.postMany(productsData);
+          if (!products)
             throw new AppError(
               HttpStatusCode.NOT_ACCEPTABLE,
               ERROR_MSG.NOT_VALID,
               true,
             );
-          res.status(HttpStatusCode.CREATED).send(poets);
+          res.status(HttpStatusCode.CREATED).send(products);
         } catch (errors) {
           next(errors);
         }

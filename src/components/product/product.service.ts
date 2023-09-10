@@ -39,14 +39,14 @@ export class ProductService {
     } 
 
     public async postMany(
-        ProductsData: Product[],
+        productsData: Product[],
     ): Promise<{newProducts: Product[], nonValidProducts: Product[]} | false> {
 
-        let isValid = async (ProductData: Product) => await createSchema.isValid(ProductData)
-        let isNotValid = async (ProductData: Product) => await createSchema.isValid(ProductData) === false
+        let isValid = async (productData: Product) => await createSchema.isValid(productData)
+        let isNotValid = async (productData: Product) => await createSchema.isValid(productData) === false
 
-        const validProducts: Product[]  =  await filterAsync(ProductsData, isValid)
-        const nonValidProducts: Product[] =  await filterAsync(ProductsData, isNotValid)
+        const validProducts: Product[]  =  await filterAsync(productsData, isValid)
+        const nonValidProducts: Product[] =  await filterAsync(productsData, isNotValid)
 
         const newProducts = await this.productRepository.save(
         validProducts
