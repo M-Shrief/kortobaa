@@ -3,6 +3,8 @@ import {AppDataSource} from '../../db';
 import { Product } from './product.entity';
 // Schemas
 import { createSchema, updateSchema } from './product.schema';
+// Utils
+import { filterAsync } from '../../utils/asyncFilterAndMap';
 
 export class ProductService {
     private productRepository = AppDataSource.getRepository(Product);
@@ -35,6 +37,25 @@ export class ProductService {
         if(!newProduct) return false;
         return newProduct;
     } 
+
+    public async postMany(
+        ProductsData: Product[],
+    ): Promise<{newProducts: Product[], nonValidProducts: Product[]} | false> {
+
+        let isValid = async (ProductData: Product) => await createSchema.isValid(ProductData)
+        let isNotValid = async (ProductData: Product) => await createSchema.isValid(ProductData) === false
+
+        const validProducts: Product[]  =  await filterAsync(ProductsData, isValid)
+        const nonValidProducts: Product[] =  await filterAsync(ProductsData, isNotValid)
+
+        const newProducts = await this.productRepository.save(
+        validProducts
+        );
+        if (!newProducts) return false;
+
+        const result = {newProducts, nonValidProducts}
+        return result;
+    }
 
     public async update(id: string, productData: Product): Promise<number | false> {
         const isValid = await updateSchema.isValid(productData);

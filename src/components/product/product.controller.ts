@@ -40,6 +40,21 @@ export class ProductController {
         }
     }
 
+    public postMany = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+          const poets = await this.productService.postMany(req.body);
+          if (!poets)
+            throw new AppError(
+              HttpStatusCode.NOT_ACCEPTABLE,
+              ERROR_MSG.NOT_VALID,
+              true,
+            );
+          res.status(HttpStatusCode.CREATED).send(poets);
+        } catch (errors) {
+          next(errors);
+        }
+    };
+
     public postMulter = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const image = Buffer.from(req.file?.buffer!).toString('base64')

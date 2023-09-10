@@ -29,6 +29,8 @@ export class ProductRoute implements IRoute {
         this.router.get('/product/:id', this.controller.getOne)
 
         this.router.post('/product', this.controller.post)
+        
+        this.router.post('/products', this.controller.postMany)
 
         this.router.put('/product/:id', this.controller.update)
         
