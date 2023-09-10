@@ -9,14 +9,35 @@ import { filterAsync } from '../../utils/asyncFilterAndMap';
 export class ProductService {
     private productRepository = AppDataSource.getRepository(Product);
 
-    public async getOne(id: string, userId: string): Promise<Product | false> {
+
+    public async getAll(): Promise<Product[] | false> {
+        const products = await this.productRepository.find({
+          select: {
+            id: true,
+            title: true,
+            price: true,
+            image: true,
+            user: {
+                id: true,
+                name: true,
+            }
+          },
+          relations:  ['user'],
+          cache: true,
+        });
+        if (products.length === 0) return false;
+        return products;
+    }
+
+    public async getOne(id: string): Promise<Product | false> {
 
         const existingProduct = await this.productRepository.findOne({
-            where: { id, user: {id: userId} },
+            where: { id },
             select: {
                 id: true,
                 title: true,
                 price: true,
+                image: true,
                 user: {
                     id: true,
                     name: true

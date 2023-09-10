@@ -26,14 +26,12 @@ export class ProductRoute implements IRoute {
     }
 
     private initializeRoutes() {
+
+        this.router.get('/products',this.controller.getAll)
+
         this.router.get(
             '/product/:id',
-            [
-                jwtToken(true),
-                guard.check(["user:read", "user:write"]),
-                authErrorHandler,
-                validate([param('id').isUUID(4).withMessage(ERROR_MSG.NOT_FOUND)]),
-            ],
+            [validate([param('id').isUUID(4).withMessage(ERROR_MSG.NOT_FOUND)])],
             this.controller.getOne
         )
 

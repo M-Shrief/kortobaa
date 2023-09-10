@@ -12,17 +12,32 @@ import { decodeToken } from "../../utils/auth";
 export class ProductController {
     private productService = new ProductService();
 
+
+    public getAll = async (req: Request, res: Response, next: NextFunction) => {
+        try {  
+            const products = await this.productService.getAll();
+            if(!products)
+                throw new AppError(
+                    HttpStatusCode.NOT_FOUND,
+                    ERROR_MSG.NOT_FOUND,
+                    true
+                )
+            res.status(HttpStatusCode.OK).send(products);
+        } catch (error) {
+            next(error)
+        }
+    }
+
     public getOne = async (req: Request, res: Response, next: NextFunction) => {
         try {  
-            const decoded = decodeToken(req.headers.authorization!.slice(7)) as JwtPayload;
-            const product = await this.productService.getOne(req.params.id, decoded.id);
+            const product = await this.productService.getOne(req.params.id);
             if(!product)
                 throw new AppError(
                     HttpStatusCode.NOT_FOUND,
                     ERROR_MSG.NOT_FOUND,
                     true
                 )
-            res.status(HttpStatusCode.CREATED).send(product);
+            res.status(HttpStatusCode.OK).send(product);
         } catch (error) {
             next(error)
         }
