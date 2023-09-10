@@ -9,10 +9,10 @@ import { filterAsync } from '../../utils/asyncFilterAndMap';
 export class ProductService {
     private productRepository = AppDataSource.getRepository(Product);
 
-    public async getOne(id: string): Promise<Product | false> {
+    public async getOne(id: string, userId: string): Promise<Product | false> {
 
         const existingProduct = await this.productRepository.findOne({
-            where: { id },
+            where: { id, user: {id: userId} },
             select: {
                 id: true,
                 title: true,
@@ -57,17 +57,17 @@ export class ProductService {
         return result;
     }
 
-    public async update(id: string, productData: Product): Promise<number | false> {
+    public async update(id: string, userId: string, productData: Product): Promise<number | false> {
         const isValid = await updateSchema.isValid(productData);
         if (!isValid) return false;
 
-        const newProduct = await this.productRepository.update(id,productData);
+        const newProduct = await this.productRepository.update({id, user: {id: userId}},productData);
         if (!newProduct.affected) return false;
         return newProduct.affected;
     } 
 
-    public async remove(id: string): Promise<number | false> {
-        const product = await this.productRepository.delete(id);
+    public async remove(id: string, userId: string): Promise<number | false> {
+        const product = await this.productRepository.delete({id, user: {id: userId}});
         if (!product.affected) return false;
         return product.affected;
     }

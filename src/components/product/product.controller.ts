@@ -3,16 +3,19 @@ import { NextFunction, Request, Response } from "express";
 import { ProductService } from "./product.service";
 // Types
 import { ERROR_MSG } from "./product.entity";
+import { JwtPayload } from "jsonwebtoken";
 // Utils
 import { AppError } from "../../utils/errorsCenter/appError";
 import HttpStatusCode from "../../utils/httpStatusCode";
+import { decodeToken } from "../../utils/auth";
 
 export class ProductController {
     private productService = new ProductService();
 
     public getOne = async (req: Request, res: Response, next: NextFunction) => {
         try {  
-            const product = await this.productService.getOne(req.params.id);
+            const decoded = decodeToken(req.headers.authorization!.slice(7)) as JwtPayload;
+            const product = await this.productService.getOne(req.params.id, decoded.id);
             if(!product)
                 throw new AppError(
                     HttpStatusCode.NOT_FOUND,
@@ -73,7 +76,8 @@ export class ProductController {
 
     public update = async (req: Request, res: Response, next: NextFunction) => {
         try {  
-            const product = await this.productService.update(req.params.id, req.body);
+            const decoded = decodeToken(req.headers.authorization!.slice(7)) as JwtPayload;
+            const product = await this.productService.update(req.params.id, decoded.id, req.body);
             if(!product)
                 throw new AppError(
                     HttpStatusCode.NOT_ACCEPTABLE,
@@ -88,7 +92,8 @@ export class ProductController {
 
     public remove = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const product = await this.productService.remove(req.params.id);
+            const decoded = decodeToken(req.headers.authorization!.slice(7)) as JwtPayload;
+            const product = await this.productService.remove(req.params.id, decoded.id);
             if (!product)
                 throw new AppError(HttpStatusCode.NOT_FOUND, ERROR_MSG.NOT_FOUND, true);
           res.status(HttpStatusCode.ACCEPTED).send("Deleted Successfully");

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 // Controller
 import { ProductController } from "./product.controller";
 // Types
@@ -26,17 +26,52 @@ export class ProductRoute implements IRoute {
     }
 
     private initializeRoutes() {
-        this.router.get('/product/:id', this.controller.getOne)
+        this.router.get(
+            '/product/:id',
+            [
+                jwtToken(true),
+                guard.check(["user:read", "user:write"]),
+                authErrorHandler,
+                // validate([param('id').isUUID(4).withMessage(ERROR_MSG.NOT_FOUND)]),
+            ],
+            this.controller.getOne
+        )
 
-        this.router.post('/product', this.controller.post)
-        
-        this.router.post('/products', this.controller.postMany)
-
-        this.router.put('/product/:id', this.controller.update)
-        
-        this.router.delete('/product/:id', this.controller.remove)
+        this.router.post('/product',this.controller.post)
 
         // An example using multer to get the data from req.file
-        // this.router.post('/product', uploadImages.single('image'), this.controller.postMulter)
+        // this.router.post(
+        //     '/product',
+        //     [
+        //         uploadImages.single('image'),
+        //         jwtToken(true),
+        //         guard.check(["user:read", "user:write"]),
+        //         authErrorHandler,
+        //     ],
+        //     this.controller.postMulter
+        // )
+
+
+        this.router.post('/products', this.controller.postMany)
+
+        this.router.put(
+            '/product/:id', 
+            [
+                jwtToken(true),
+                guard.check(["user:read", "user:write"]),
+                authErrorHandler,
+            ],
+            this.controller.update
+        )
+        
+        this.router.delete(
+            '/product/:id',
+            [
+                jwtToken(true),
+                guard.check(["user:read", "user:write"]),
+                authErrorHandler,
+            ],
+            this.controller.remove
+        )
     }
 }
