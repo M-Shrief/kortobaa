@@ -8,6 +8,6 @@ import "./redis";
 import { UserRoute } from "./components/user/user.route";
 import { ProductRoute } from "./components/product/product.route";
 
-const app = new App([container.resolve(UserRoute), new ProductRoute()]);
+const app = new App([container.resolve(UserRoute), container.resolve(ProductRoute)]);
 
 export default app.listen();

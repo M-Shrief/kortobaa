@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import {  injectable } from "tsyringe";
 // Services
 import { ProductService } from "./product.service";
 // Types
@@ -9,8 +10,9 @@ import { AppError } from "../../utils/errorsCenter/appError";
 import HttpStatusCode from "../../utils/httpStatusCode";
 import { decodeToken } from "../../utils/auth";
 
+@injectable()
 export class ProductController {
-    private productService = new ProductService();
+    constructor(private productService: ProductService) {}
 
 
     public getAll = async (req: Request, res: Response, next: NextFunction) => {

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { body, param } from "express-validator";
+import { injectable } from "tsyringe";
 // Controller
 import { ProductController } from "./product.controller";
 // Types
@@ -17,11 +18,12 @@ import { setCache } from "../../middlewares/cache.middleware";
 import multer from "multer";
 const uploadImages = multer({ limits: {fileSize: 4 * 1024 * 1024,}});
 
+@injectable()
 export class ProductRoute implements IRoute {
     public router: Router = Router();
-    private controller = new ProductController();
+    
 
-    constructor() {
+    constructor(private controller: ProductController) {
         this.initializeRoutes();
     }
 
