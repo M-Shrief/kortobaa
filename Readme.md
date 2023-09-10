@@ -18,9 +18,8 @@ To be further improved with:
 - benefiting from tsyringe in decomposing the project, and provide better testing, with lower maintainability.
 - with further business needs, we can use Redis for caching responses.
 
-### Note
+### Notes
 Make sure to declare ENV properties in PM2 config file, and generate JWT keys before.
-And You need to disaple deleting signup data in 
 To generate JWT keys:
 
 ```bash
@@ -28,6 +27,8 @@ $ openssl genrsa -out jwtRSA256-private.pem 2048
 
 $ openssl rsa -in jwtRSA256-private.pem -pubout -outform PEM -out jwtRSA256-public.pem
 ```
+
+And you need to have adjust E2E tests' data with your local database.
 ## File Structure
 
 - _app.ts_ is the main file for app logic, initializing middlewares and routes, and
