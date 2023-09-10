@@ -32,7 +32,7 @@ export class ProductRoute implements IRoute {
                 jwtToken(true),
                 guard.check(["user:read", "user:write"]),
                 authErrorHandler,
-                // validate([param('id').isUUID(4).withMessage(ERROR_MSG.NOT_FOUND)]),
+                validate([param('id').isUUID(4).withMessage(ERROR_MSG.NOT_FOUND)]),
             ],
             this.controller.getOne
         )
@@ -43,6 +43,23 @@ export class ProductRoute implements IRoute {
                 jwtToken(true),
                 guard.check(["user:read", "user:write"]),
                 authErrorHandler,
+                validate([
+                    body('title')
+                        .isString()
+                        .trim()
+                        .escape()
+                        .withMessage(ERROR_MSG.TITLE),
+
+                    body('price')
+                        .isInt({min: 0}).withMessage(ERROR_MSG.PRICE),
+
+                    body('image')
+                        .isString()
+                        .trim()
+                        .escape()
+                        .isBase64()
+                        .withMessage(ERROR_MSG.IMAGE)
+                ]),
             ],
             this.controller.post
         )
@@ -76,6 +93,29 @@ export class ProductRoute implements IRoute {
                 jwtToken(true),
                 guard.check(["user:read", "user:write"]),
                 authErrorHandler,
+                validate([
+                    param('id').isUUID(4).withMessage(ERROR_MSG.NOT_FOUND),
+
+                    body('title')
+                        .optional()
+                        .isString()
+                        .trim()
+                        .escape()
+                        .withMessage(ERROR_MSG.TITLE),
+
+                    body('price')
+                        .optional()
+                        .isInt({min: 0})
+                        .withMessage(ERROR_MSG.PRICE),
+
+                    body('image')
+                        .optional()
+                        .isString()
+                        .trim()
+                        .escape()
+                        .isBase64()
+                        .withMessage(ERROR_MSG.IMAGE)
+                ]),
             ],
             this.controller.update
         )
@@ -86,6 +126,7 @@ export class ProductRoute implements IRoute {
                 jwtToken(true),
                 guard.check(["user:read", "user:write"]),
                 authErrorHandler,
+                validate([param('id').isUUID(4).withMessage(ERROR_MSG.NOT_FOUND)]),
             ],
             this.controller.remove
         )
