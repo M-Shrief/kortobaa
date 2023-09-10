@@ -53,8 +53,6 @@ export class ProductRoute implements IRoute {
 
                     body('image')
                         .isString()
-                        .trim()
-                        .escape()
                         .isBase64()
                         .withMessage(ERROR_MSG.IMAGE)
                 ]),
@@ -109,8 +107,6 @@ export class ProductRoute implements IRoute {
                     body('image')
                         .optional()
                         .isString()
-                        .trim()
-                        .escape()
                         .isBase64()
                         .withMessage(ERROR_MSG.IMAGE)
                 ]),
