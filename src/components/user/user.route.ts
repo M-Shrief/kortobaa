@@ -35,16 +35,18 @@ export class UserRoute implements IRoute {
     this.router.post(
       "/user/signup",
       validate([
-        body("name").isString().escape().withMessage(ERROR_MSG.NAME),
+        body("name").isString().trim().escape().withMessage(ERROR_MSG.NAME),
 
         body("phone")
           .isString()
+          .trim()
           .escape()
           // .isMobilePhone('any')
           .withMessage(ERROR_MSG.PHONE),
 
         body("password")
           .isString()
+          .trim()
           // .isStrongPassword()
           .escape()
           .withMessage(ERROR_MSG.PASSWORD),
@@ -54,9 +56,9 @@ export class UserRoute implements IRoute {
     this.router.post(
       "/user/login",
       validate([
-        body("phone").isString().escape().withMessage(ERROR_MSG.PHONE),
+        body("phone").isString().trim().escape().withMessage(ERROR_MSG.PHONE),
 
-        body("password").isString().escape().withMessage(ERROR_MSG.PASSWORD),
+        body("password").isString().trim().escape().withMessage(ERROR_MSG.PASSWORD),
       ]),
       this.controller.login,
     );
@@ -71,19 +73,22 @@ export class UserRoute implements IRoute {
           body("name")
             .optional()
             .isString()
+            .trim()
             .escape()
             .withMessage(ERROR_MSG.NAME),
 
           body("phone")
             .optional()
-            .escape()
             .isString()
+            .escape()
+            .trim()
             // .isMobilePhone('any')
             .withMessage(ERROR_MSG.PHONE),
 
           body("password")
             .optional()
             .isString()
+            .trim()
             // .isStrongPassword()
             .escape()
             .withMessage(ERROR_MSG.PASSWORD),

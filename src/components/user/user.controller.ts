@@ -5,10 +5,9 @@ import { UserService } from "./user.service";
 import { JwtPayload } from "jsonwebtoken";
 import { ERROR_MSG } from "./user.entity";
 // Utils
-import { signToken, verifyToken } from "../../utils/auth";
+import { signToken,decodeToken } from "../../utils/auth";
 import { AppError } from "../../utils/errorsCenter/appError";
 import HttpStatusCode from "../../utils/httpStatusCode";
-import {decodeToken} from '../../utils/auth';
 
 export class UserController {
   private userService = new UserService();
