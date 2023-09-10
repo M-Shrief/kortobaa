@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import App from "./app";
+import { container } from "tsyringe";
 // Databases
 import "./db";
 import "./redis";
@@ -7,6 +8,6 @@ import "./redis";
 import { UserRoute } from "./components/user/user.route";
 import { ProductRoute } from "./components/product/product.route";
 
-const app = new App([new UserRoute(), new ProductRoute()]);
+const app = new App([container.resolve(UserRoute), new ProductRoute()]);
 
 export default app.listen();

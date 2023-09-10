@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { body } from "express-validator";
+import {  injectable } from "tsyringe";
 // Controller
 import { UserController } from "./user.controller";
 // Types
@@ -13,11 +14,12 @@ import {
   authErrorHandler,
 } from "../../middlewares/auth.middleware";
 import { setCache } from "../../middlewares/cache.middleware";
+@injectable()
 export class UserRoute implements IRoute {
   public router: Router = Router();
-  private controller: UserController = new UserController();
 
-  constructor() {
+  
+  constructor(private controller: UserController) {
     this.initializeRoutes();
   }
 

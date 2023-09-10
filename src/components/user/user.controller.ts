@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import {  injectable } from "tsyringe";
 // Services
 import { UserService } from "./user.service";
 // Types
@@ -9,9 +10,10 @@ import { signToken,decodeToken } from "../../utils/auth";
 import { AppError } from "../../utils/errorsCenter/appError";
 import HttpStatusCode from "../../utils/httpStatusCode";
 
+@injectable()
 export class UserController {
-  private userService = new UserService();
-
+  constructor(private userService: UserService) {}
+  
   private signToken = (name: string, id: string) =>
     signToken(
       {

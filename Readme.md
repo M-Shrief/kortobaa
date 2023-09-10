@@ -1,9 +1,12 @@
-# TypeScript, Nodejs and Express.js Starter.
+# Job task
 
-A starter template for TypeScript with Nodejs & Express.js, with basic configuration Postgres & Redis.
+Requirments: 
+- Express.js, TypeScript and OOP, as a REST API.
+- MySQL database (User: name, phone, password | Product: title, image, price, user_id)
+- JWT authentication & authorization (prevent users from editing or removing others' products)
+
 
 characteristics:
-
 - Using TypeORM
 - Centralized Error handling.
 - JWT Authentication & Authorization.
@@ -11,6 +14,9 @@ characteristics:
 - Express-validator & Yup for data validation.
 - Using PM2 for process management & ENVs.
 
+To be further improved with:
+- benefiting from tsyringe in decomposing the project, and provide better testing, with lower maintainability.
+- with further business needs, we can use Redis for caching responses.
 
 ### Note
 Make sure to declare ENV properties in PM2 config file, and generate JWT keys before.
